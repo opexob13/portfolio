@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>API Documentation</title>
-  <!-- Highlight.js для подсветки JSON -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
@@ -33,28 +32,48 @@
     th {
       background: #f0f0f0;
     }
-    /* Вкладки */
+    details {
+      margin-bottom: 15px;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: bold;
+      padding: 5px 0;
+    }
+    summary:hover {
+      color: #007bff;
+    }
+    blockquote {
+      background: #f0f8ff;
+      padding: 10px 15px;
+      border-left: 4px solid #007bff;
+      margin: 15px 0;
+    }
+    /* Стили для вкладок */
     .tabs {
       margin-top: 20px;
-      border-bottom: 2px solid #ccc;
     }
-    .tabs button {
-      background: #f0f0f0;
+    .tablink {
+      background-color: #f1f1f1;
       border: none;
-      padding: 10px 20px;
+      outline: none;
       cursor: pointer;
-      font-size: 16px;
-      margin-right: 2px;
-      border-radius: 6px 6px 0 0;
-    }
-    .tabs button.active {
-      background: #fff;
-      border-bottom: 2px solid #fff;
+      padding: 8px 16px;
+      margin-right: 4px;
       font-weight: bold;
+      border-radius: 4px 4px 0 0;
+    }
+    .tablink.active {
+      background-color: #fff;
+      border-bottom: 2px solid #fff;
     }
     .tabcontent {
       display: none;
-      padding-top: 10px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      background: #fff;
     }
   </style>
 </head>
@@ -69,57 +88,39 @@
 <p>Перед запуском метода необходимо создать шаблон задания на обзвон и установить настройку использования этого шаблона по умолчанию. Подробнее читайте в статье <a href="/voice-bots/instructions/manage-templates">Управление шаблонами</a>.</p>
 <p>При использовании метода создается одно задание на обзвон в сутки под каждого участвующего бота. Повторный вызов метода добавляет новых кандидатов в уже созданное задание.</p>
 <p>Все настройки создаваемого задания, кроме сценария бота, берутся из шаблона по умолчанию. Если в шаблоне изменились настройки, при следующем запросе создается новое задание.</p>
-<blockquote>Сценарий бота, который будет использоваться в звонках, указывается в теле запроса в поле <code>botSettingsId</code>.</blockquote>
+
+<blockquote>
+  <strong>Информация:</strong> Сценарий бота, который будет использоваться в звонках, указывается в теле запроса в поле <code>botSettingsId</code>.
+</blockquote>
 
 <h2>Примеры запроса</h2>
 
-<div class="tabs">
-  <button class="tablink active" onclick="openTab(event, 'curl')">cURL</button>
-  <button class="tablink" onclick="openTab(event, 'body')">Тело запроса</button>
-</div>
-
-<div id="curl" class="tabcontent" style="display:block">
-<pre><code class="json">curl --request POST \
+<details>
+  <summary>cURL</summary>
+  <pre><code class="json">curl --request POST \
      --url https://twin24.ai/cis/api/v1/telephony/autoCallCandidate/single \
      --header 'accept: application/json' \
      --header 'authorization: Bearer ТОКЕН' \
      --header 'content-type: application/json' \
-     --data '
-{
-  "callbackData": {
-    "test": "123"
-  },
-  "phone": [
-    "79991234567"
-  ],
+     --data '{
+  "callbackData": {"test": "123"},
+  "phone": ["79991234567"],
   "botSettingsId": "2656622a-57b2-478f-acf9-6167120d18bf",
-  "variables": {
-    "Имя": "Николай",
-    "Возраст": "28"
-  },
+  "variables": {"Имя": "Николай", "Возраст": "28"},
   "timezone": 16800
-}
-'
-</code></pre>
-</div>
+}'</code></pre>
+</details>
 
-<div id="body" class="tabcontent">
-<pre><code class="json">{
-  "callbackData": {
-    "test": "123"
-  },
-  "phone": [
-    "79991234567"
-  ],
+<details>
+  <summary>Тело запроса</summary>
+  <pre><code class="json">{
+  "callbackData": {"test": "123"},
+  "phone": ["79991234567"],
   "botSettingsId": "2656622a-57b2-478f-acf9-6167120d18bf",
-  "variables": {
-    "Имя": "Николай",
-    "Возраст": "28"
-  },
+  "variables": {"Имя": "Николай", "Возраст": "28"},
   "timezone": 16800
-}
-</code></pre>
-</div>
+}</code></pre>
+</details>
 
 <h2>Поля запроса</h2>
 <table>
@@ -148,56 +149,54 @@
 </div>
 
 <div id="resp200" class="tabcontent" style="display:block">
-<pre><code class="json">{
+  <pre><code class="json">{
   "id": {
     "identity": "bce7d22e-dde6-4427-b391-ebbdfda44de6"
   }
-}
-</code></pre>
+}</code></pre>
 
-<p><strong>Описание полей ответа:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Название</th>
-      <th>Тип</th>
-      <th>Обязательное</th>
-      <th>Описание</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td><code>id</code></td><td>object</td><td>Да</td><td>Идентификатор кандидата, добавленного в задание на обзвон.</td></tr>
-    <tr><td><code>identity</code></td><td>string</td><td>Да</td><td>Идентификатор добавленного кандидата.</td></tr>
-  </tbody>
-</table>
+  <p><strong>Описание полей ответа:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Тип</th>
+        <th>Обязательное</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>object</td><td>Да</td><td>Идентификатор кандидата, добавленного в задание на обзвон.</td></tr>
+      <tr><td><code>identity</code></td><td>string</td><td>Да</td><td>Идентификатор добавленного кандидата.</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <div id="resp400" class="tabcontent">
-<pre><code class="json">{
+  <pre><code class="json">{
   "timestamp": 1544098870,
   "type": "MyNamespace\\MyClass",
   "error": "string",
   "details": {}
-}
-</code></pre>
+}</code></pre>
 
-<p><strong>Описание полей ответа:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Название</th>
-      <th>Тип</th>
-      <th>Обязательное</th>
-      <th>Описание</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td><code>timestamp</code></td><td>integer</td><td>Да</td><td>Текущее время.</td></tr>
-    <tr><td><code>type</code></td><td>string</td><td>Да</td><td>Класс исключения.</td></tr>
-    <tr><td><code>error</code></td><td>string</td><td>Да</td><td>Сообщение об ошибке.</td></tr>
-    <tr><td><code>details</code></td><td>object | null</td><td>Нет</td><td>Дополнительная информация об ошибке.</td></tr>
-  </tbody>
-</table>
+  <p><strong>Описание полей ответа:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Тип</th>
+        <th>Обязательное</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>timestamp</code></td><td>integer</td><td>Да</td><td>Текущее время.</td></tr>
+      <tr><td><code>type</code></td><td>string</td><td>Да</td><td>Класс исключения.</td></tr>
+      <tr><td><code>error</code></td><td>string</td><td>Да</td><td>Сообщение об ошибке.</td></tr>
+      <tr><td><code>details</code></td><td>object | null</td><td>Нет</td><td>Дополнительная информация об ошибке.</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <script>
