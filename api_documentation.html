@@ -1,159 +1,109 @@
-<p><strong>POST:</strong> <code>https://twin24.ai/cis/api/v1/telephony/autoCallCandidate/single</code></p>
-<p>Тип авторизации: <code>BEARER</code></p>
-
-<h2>Описание</h2>
-<p>
-Метод позволяет создать задание на обзвон, добавить в него кандидата и запустить задание для звонка добавленному кандидату.
-</p>
-
-<p>
-Перед запуском метода необходимо создать шаблон задания на обзвон и установить настройку использования этого шаблона по умолчанию. Подробнее о создании и настройке шаблона по умолчанию читайте в статье 
-<a href="/voice-bots/instructions/manage-templates">Управление шаблонами</a>.
-</p>
-
-<p>
-При использовании метода создается одно задание на обзвон в сутки под каждого участвующего бота. Использование метода повторно в течение одних суток после создания задания будет добавлять новых кандидатов в уже созданное задание.
-</p>
-
-<p>
-Все настройки создаваемого задания на обзвон, кроме сценария бота, берутся из шаблона, установленного по умолчанию в личном кабинете.
-</p>
-
-<p>
-Если в шаблоне задания изменились настройки, то при следующем запросе на звонок создается новое задание на обзвон. Новые кандидаты будут добавлены уже в новое задание.
-</p>
-
-<blockquote>
-<p><strong>Сценарий бота</strong>, который будет использоваться в звонках, указывается в теле запроса в поле <code>botSettingsId</code>.</p>
-</blockquote>
-
-<details>
-  <summary>cURL</summary>
-  <pre><code class="json">curl --request POST \
-     --url https://twin24.ai/cis/api/v1/telephony/autoCallCandidate/single \
-     --header 'accept: application/json' \
-     --header 'authorization: Bearer ТОКЕН' \
-     --header 'content-type: application/json' \
-     --data '
-{
-  "callbackData": {
-    "test": "123"
-  },
-  "phone": [
-    "79991234567"
-  ],
-  "botSettingsId": "2656622a-57b2-478f-acf9-6167120d18bf",
-  "variables": {
-    "Имя": "Николай",
-    "Возраст": "28"
-  },
-  "timezone": 16800
-}
-'
-</code></pre>
-</details>
-
-<details>
-  <summary>Тело запроса</summary>
-  <pre><code class="json">{
-  "callbackData": {
-    "test": "123"
-  },
-  "phone": [
-    "79991234567"
-  ],
-  "botSettingsId": "2656622a-57b2-478f-acf9-6167120d18bf",
-  "variables": {
-    "Имя": "Николай",
-    "Возраст": "28"
-  },
-  "timezone": 16800
-}
-</code></pre>
-</details>
-
-<table border="1" cellspacing="0" cellpadding="4">
-<thead>
-<tr>
-  <th>Название</th>
-  <th>Тип</th>
-  <th>Обязательное</th>
-  <th>Описание</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><code>phone</code></td>
-  <td>List[string]</td>
-  <td>Да</td>
-  <td>Список номеров телефона кандидатов, на которые будет запущен звонок.</td>
-</tr>
-<tr>
-  <td><code>botSettingsId</code></td>
-  <td>String</td>
-  <td>Да</td>
-  <td>Идентификатор сценария бота, который будет запущен в звонке.</td>
-</tr>
-<tr>
-  <td><code>variables</code></td>
-  <td>Object</td>
-  <td>Нет</td>
-  <td>Объект с пользовательскими переменными по кандидату.</td>
-</tr>
-<tr>
-  <td><code>timezone</code></td>
-  <td>Int</td>
-  <td>Нет</td>
-  <td>Часовой пояс кандидата. Указывается как отклонение от UTC+0 в секундах. Максимальное значение 43200 и минимальное -43200.</td>
-</tr>
-<tr>
-  <td><code>callbackData</code></td>
-  <td>Object</td>
-  <td>Нет</td>
-  <td>Объект с полями информации по кандидату. Информация возвращается в неизменном виде в хуках о результате звонка и о результате обработки кандидата. Например: ID клиента или ID номера телефона.</td>
-</tr>
-</tbody>
-</table>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>API Documentation</title>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      line-height: 1.5;
+    }
+    pre {
+      background: #f8f8f8;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 10px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    /* Вкладки */
+    .tabs {
+      margin-top: 20px;
+      border-bottom: 2px solid #ccc;
+    }
+    .tabs button {
+      background: #f0f0f0;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 2px;
+      border-radius: 6px 6px 0 0;
+    }
+    .tabs button.active {
+      background: #fff;
+      border-bottom: 2px solid #fff;
+      font-weight: bold;
+    }
+    .tabcontent {
+      display: none;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
 
 <h2>Примеры ответа:</h2>
-<h3>200</h3>
 
-<pre><code class="json">{
+<div class="tabs">
+  <button class="tablink active" onclick="openTab(event, 'resp200')">200</button>
+  <button class="tablink" onclick="openTab(event, 'resp400')">400</button>
+</div>
+
+<div id="resp200" class="tabcontent" style="display:block">
+  <pre><code class="json">{
   "id": {
     "identity": "bce7d22e-dde6-4427-b391-ebbdfda44de6"
   }
 }
 </code></pre>
 
-<p><strong>Описание полей ответа:</strong></p>
-<table border="1" cellspacing="0" cellpadding="4">
-<thead>
-<tr>
-  <th>Название</th>
-  <th>Тип</th>
-  <th>Обязательное</th>
-  <th>Описание</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><code>id</code></td>
-  <td>object</td>
-  <td>Да</td>
-  <td>Объект, содержащий идентификатор кандидата, добавленного в созданное методом задание на обзвон.</td>
-</tr>
-<tr>
-  <td><code>identity</code></td>
-  <td>string</td>
-  <td>Да</td>
-  <td>Идентификатор добавленного кандидата на обзвон.</td>
-</tr>
-</tbody>
-</table>
+  <p><strong>Описание полей ответа:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Тип</th>
+        <th>Обязательное</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>id</code></td>
+        <td>object</td>
+        <td>Да</td>
+        <td>Объект, содержащий идентификатор кандидата, добавленного в созданное методом задание на обзвон.</td>
+      </tr>
+      <tr>
+        <td><code>identity</code></td>
+        <td>string</td>
+        <td>Да</td>
+        <td>Идентификатор добавленного кандидата на обзвон.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-<h3>400</h3>
-
-<pre><code class="json">{
+<div id="resp400" class="tabcontent">
+  <pre><code class="json">{
   "timestamp": 1544098870,
   "type": "MyNamespace\\MyClass",
   "error": "string",
@@ -161,39 +111,57 @@
 }
 </code></pre>
 
-<p><strong>Описание полей ответа:</strong></p>
-<table border="1" cellspacing="0" cellpadding="4">
-<thead>
-<tr>
-  <th>Название</th>
-  <th>Тип</th>
-  <th>Обязательное</th>
-  <th>Описание</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><code>timestamp</code></td>
-  <td>integer</td>
-  <td>Да</td>
-  <td>Текущее время.</td>
-</tr>
-<tr>
-  <td><code>type</code></td>
-  <td>string</td>
-  <td>Да</td>
-  <td>Класс исключения.</td>
-</tr>
-<tr>
-  <td><code>error</code></td>
-  <td>string</td>
-  <td>Да</td>
-  <td>Сообщение об ошибке.</td>
-</tr>
-<tr>
-  <td><code>details</code></td>
-  <td>object | null</td>
-  <td>Нет</td>
-  <td>Дополнительная информация об ошибке.</td>
-</tr>
-</tbody>
+  <p><strong>Описание полей ответа:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Тип</th>
+        <th>Обязательное</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>timestamp</code></td>
+        <td>integer</td>
+        <td>Да</td>
+        <td>Текущее время.</td>
+      </tr>
+      <tr>
+        <td><code>type</code></td>
+        <td>string</td>
+        <td>Да</td>
+        <td>Класс исключения.</td>
+      </tr>
+      <tr>
+        <td><code>error</code></td>
+        <td>string</td>
+        <td>Да</td>
+        <td>Сообщение об ошибке.</td>
+      </tr>
+      <tr>
+        <td><code>details</code></td>
+        <td>object | null</td>
+        <td>Нет</td>
+        <td>Дополнительная информация об ошибке.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  // Скрыть все вкладки
+  document.querySelectorAll('.tabcontent').forEach(tab => tab.style.display = 'none');
+  // Снять активность с кнопок
+  document.querySelectorAll('.tablink').forEach(btn => btn.classList.remove('active'));
+  // Показать выбранную вкладку
+  document.getElementById(tabName).style.display = 'block';
+  // Сделать кнопку активной
+  evt.currentTarget.classList.add('active');
+}
+</script>
+
+</body>
+</html>
